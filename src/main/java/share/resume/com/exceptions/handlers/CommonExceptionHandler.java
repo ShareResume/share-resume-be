@@ -9,6 +9,7 @@ import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import share.resume.com.exceptions.EntityNotFoundException;
+import share.resume.com.exceptions.FileException;
 import share.resume.com.exceptions.JwtException;
 import share.resume.com.exceptions.UserException;
 
@@ -25,6 +26,11 @@ public class CommonExceptionHandler {
 
     @ExceptionHandler(UserException.class)
     public ResponseEntity<Map<String, String>> handleUserException(UserException e) {
+        return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(FileException.class)
+    public ResponseEntity<Map<String, String>> handleFileException(FileException e) {
         return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 

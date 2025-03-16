@@ -1,0 +1,39 @@
+package share.resume.com.entities;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import share.resume.com.entities.enums.SpecialityEnum;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+@Getter
+@Setter
+@Table(name = "RESUMES")
+@Entity
+public class ResumeEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    @ManyToOne
+    @JoinColumn(name = "AUTHOR_ID")
+    private UserEntity author;
+    private boolean isHrScreeningPassed;
+
+    @ManyToOne
+    private CompanyEntity company;
+    private LocalDateTime createdAt;
+    private Integer yearsOfExperience;
+
+    @Enumerated(EnumType.STRING)
+    private SpecialityEnum speciality;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "resume")
+    private List<DocumentEntity> documents;
+    private boolean isHidden;
+
+}

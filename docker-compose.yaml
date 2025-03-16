@@ -7,7 +7,7 @@ services:
     build:
       dockerfile: Dockerfile
     ports:
-      - "${DOCKER_BE_APP_EXPOSE_PORT}:8080"
+      - "${DOCKER_EXPOSE_APP_BE_PORT}:8080"
     environment:
       - "DB_USER=${DB_USER}"
       - "DB_PASSWORD=${DB_PASSWORD}"
@@ -18,8 +18,15 @@ services:
       - "JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}"
       - "JWT_EXPIRATION_MINUTES=${JWT_EXPIRATION_MINUTES}"
       - "JWT_REFRESH_TOKEN_EXPIRATION_DAYS=${JWT_REFRESH_TOKEN_EXPIRATION_DAYS}"
+      - "COMPANIES_INTEGRATOR_URL=${COMPANIES_INTEGRATOR_URL}"
+      - "COMPANIES_INTEGRATOR_TOKEN=${COMPANIES_INTEGRATOR_TOKEN}"
+      - "TEST_COMPANIES_INTEGRATOR_TOKEN=${TEST_COMPANIES_INTEGRATOR_TOKEN}"
+      - "MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}"
+      - "MINIO_SECRET_KEY=${MINIO_SECRET_KEY}"
+      - "MINIO_URL=${MINIO_URL}"
     depends_on:
       - db
+      - minio
   db:
     container_name: share-resume-db
     image: postgres:13.4
@@ -37,5 +44,18 @@ services:
       timeout: 10s
       retries: 15
 
+  minio:
+    image: quay.io/minio/minio
+    container_name: share-resume-minio
+    environment:
+      - "MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}"
+      - "MINIO_SECRET_KEY=${MINIO_SECRET_KEY}"
+    ports:
+      - "${DOCKER_EXPOSE_MINIO_PORT}:9000"
+    volumes:
+      - minio_data:/data
+    command: server /data
+
 volumes:
+  minio_data:
   database_data:

@@ -19,6 +19,7 @@ public class UserDetailsDto implements UserDetails {
     private String email;
     private String password;
     private RoleEnum role;
+    private UserEntity userEntity;
 
     public UserDetailsDto(UserEntity user) {
         this.id = user.getId();
@@ -26,6 +27,7 @@ public class UserDetailsDto implements UserDetails {
         this.email = user.getEmail();
         this.password = user.getPassword();
         this.role = user.getRole();
+        this.userEntity = user;
     }
 
     @Override
