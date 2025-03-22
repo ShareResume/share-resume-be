@@ -65,8 +65,9 @@ public class APIService {
 
         Headers requestHeaders = Headers.of(headers);
         RequestBody requestBody;
-
+        boolean isMultipart = false;
         if (org.springframework.http.MediaType.MULTIPART_FORM_DATA.toString().equals(mediaType.toString())) {
+            isMultipart = true;
             MultipartBody.Builder multipartBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
 
             for (Map.Entry<String, Object> entry : body.entrySet()) {
@@ -110,6 +111,9 @@ public class APIService {
                 throw new HttpException("Response isn't successful for url request: " + finalUrl);
             }
             log.info("Response is successful for url request: " + finalUrl + ", response: " + responseBody);
+            if (isMultipart) {
+                return Map.of("file", responseBody);
+            }
             return objectMapper.readValue(responseBody, Map.class);
         } catch (Exception e) {
             log.error(e.getMessage(), e);

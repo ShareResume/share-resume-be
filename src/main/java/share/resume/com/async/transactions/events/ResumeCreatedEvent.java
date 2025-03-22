@@ -11,6 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class ResumeCreatedEvent {
     private MultipartFile cvFilePublic;
     private String cvPublicFilename;
-    //private MultipartFile cvFilePrivate;
     private String directoryName;
+
+    private MultipartFile cvFilePrivate;
+    private String cvPrivateFilename;
 }

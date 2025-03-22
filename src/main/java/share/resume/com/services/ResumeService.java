@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import share.resume.com.async.transactions.events.ResumeCreatedEvent;
+import share.resume.com.async.transactions.events.ResumeDeletedEvent;
 import share.resume.com.controllers.dto.DocumentView;
 import share.resume.com.controllers.dto.request.CreateResumeRequestBody;
 import share.resume.com.controllers.dto.request.UpdateResumeRequestBody;
@@ -18,6 +19,7 @@ import share.resume.com.entities.ResumeEntity;
 import share.resume.com.entities.UserEntity;
 import share.resume.com.entities.enums.DocumentAccessTypeEnum;
 import share.resume.com.exceptions.EntityNotFoundException;
+import share.resume.com.integrators.AnonymizerIntegratorService;
 import share.resume.com.repositories.ResumeRepository;
 import share.resume.com.security.dto.UserDetailsDto;
 import share.resume.com.services.files.FileService;
@@ -35,6 +37,7 @@ public class ResumeService {
     private final CompanyService companyService;
     private final ResumeRepository resumeRepository;
     private final FileService fileService;
+    private final AnonymizerIntegratorService anonymizerIntegratorService;
 
     @Transactional
     public void save(CreateResumeRequestBody createResumeRequestBody) {
@@ -58,15 +61,16 @@ public class ResumeService {
         publicCvEnitiy.setDirectory(directoryName);
         publicCvEnitiy.setName(publicCvFileName);
 
-        /*
-        DocumentEntity cvPrivate = new DocumentEntity();
-        cvPrivate.setAccessType(DocumentAccessTypeEnum.PRIVATE);
-        cvPrivate.setResume(resume);
+        MultipartFile privateCvFile = anonymizerIntegratorService.anonymize(publicCv);
 
-        resume.setDocuments(List.of(cvPublic, cvPrivate));
-        */
-        resume.setDocuments(List.of(publicCvEnitiy));
-        eventPublisher.publishEvent(new ResumeCreatedEvent(createResumeRequestBody.getDocument(), publicCvFileName, directoryName));
+        DocumentEntity privateCvEntity = new DocumentEntity();
+        privateCvEntity.setAccessType(DocumentAccessTypeEnum.PRIVATE);
+        privateCvEntity.setResume(resume);
+        privateCvEntity.setDirectory(directoryName);
+        privateCvEntity.setName(privateCvFile.getOriginalFilename());
+        resume.setDocuments(List.of(publicCvEnitiy, privateCvEntity));
+
+        eventPublisher.publishEvent(new ResumeCreatedEvent(createResumeRequestBody.getDocument(), publicCvFileName, directoryName, privateCvFile, privateCvFile.getOriginalFilename()));
         resumeRepository.save(resume);
     }
 
@@ -87,7 +91,18 @@ public class ResumeService {
 
     @Transactional
     public void delete(UUID id) {
+        ResumeEntity resume = getById(id);
         resumeRepository.deleteById(id);
+        DocumentEntity publicDoc = resume.getDocuments().stream()
+                .filter(d -> d.getAccessType() == DocumentAccessTypeEnum.PUBLIC)
+                .findAny()
+                .get();
+        DocumentEntity privateDoc = resume.getDocuments().stream()
+                .filter(d -> d.getAccessType() == DocumentAccessTypeEnum.PRIVATE)
+                .findAny()
+                .get();
+        String directoryName = publicDoc.getDirectory();
+        eventPublisher.publishEvent(new ResumeDeletedEvent(publicDoc.getName(), privateDoc.getName(), directoryName));
     }
 
     @Transactional

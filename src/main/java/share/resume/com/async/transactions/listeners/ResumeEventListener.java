@@ -7,6 +7,7 @@ import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.multipart.MultipartFile;
 import share.resume.com.async.transactions.events.ResumeCreatedEvent;
+import share.resume.com.async.transactions.events.ResumeDeletedEvent;
 import share.resume.com.services.files.FileService;
 
 @Component
@@ -21,7 +22,19 @@ public class ResumeEventListener {
             String directory = event.getDirectoryName();
             MultipartFile cvPublicFile = event.getCvFilePublic();
             fileService.upload(directory, cvPublicFile, cvPublicFile.getOriginalFilename());
-            //ileService.upload(directory, event.getCvFilePrivate());
+            fileService.upload(directory, event.getCvFilePrivate(), event.getCvFilePrivate().getOriginalFilename());
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onResumeDeleted(ResumeDeletedEvent event) {
+        try {
+            String directory = event.getDirectory();
+            fileService.delete(directory, event.getPublicFileName());
+            fileService.delete(directory, event.getPrivateFileName());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw e;
