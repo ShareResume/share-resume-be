@@ -111,16 +111,21 @@ public class ResumeService {
         List<ResumeEntity> resumes = resumeRepository.findAllByAuthor(userDetailsDto.getUserEntity());
         List<ResumeResponseBody> resumeResponseBodies = new ArrayList<>();
         for (ResumeEntity resume : resumes) {
-            List<DocumentView> documentViews = new ArrayList<>();
-            for (DocumentEntity document : resume.getDocuments()) {
-                DocumentView documentView = new DocumentView();
-                documentView.setAccessType(document.getAccessType());
-                documentView.setName(document.getName());
-                documentView.setUrl(fileService.getAccessLink(document.getDirectory(), document.getName()));
-                documentViews.add(documentView);
-            }
+            List<DocumentView> documentViews = getDocumentsByResume(resume);
             resumeResponseBodies.add(new ResumeResponseBody(resume, documentViews));
         }
         return resumeResponseBodies;
+    }
+
+    public List<DocumentView> getDocumentsByResume(ResumeEntity resume) {
+        List<DocumentView> documentViews = new ArrayList<>();
+        for (DocumentEntity document : resume.getDocuments()) {
+            DocumentView documentView = new DocumentView();
+            documentView.setAccessType(document.getAccessType());
+            documentView.setName(document.getName());
+            documentView.setUrl(fileService.getAccessLink(document.getDirectory(), document.getName()));
+            documentViews.add(documentView);
+        }
+        return documentViews;
     }
 }
