@@ -1,4 +1,4 @@
-package share.resume.com.integrators;
+package share.resume.com.services.integrators;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -117,7 +117,7 @@ public class APIService {
             return objectMapper.readValue(responseBody, Map.class);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new HttpException("Error during request sending");
+            throw new HttpException("Error during request sending to url: " + url);
         }
     }
 

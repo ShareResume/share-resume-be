@@ -19,7 +19,7 @@ import share.resume.com.entities.ResumeEntity;
 import share.resume.com.entities.UserEntity;
 import share.resume.com.entities.enums.DocumentAccessTypeEnum;
 import share.resume.com.exceptions.EntityNotFoundException;
-import share.resume.com.integrators.AnonymizerIntegratorService;
+import share.resume.com.services.integrators.AnonymizerIntegratorService;
 import share.resume.com.repositories.ResumeRepository;
 import share.resume.com.security.dto.UserDetailsDto;
 import share.resume.com.services.files.FileService;

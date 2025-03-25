@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@Table(name = "user_comment_vote_state")
+@Table(name = "USER_COMMENT_VOTE_STATE")
 @Entity
 public class UserCommentVoteStateEntity {
 

@@ -29,7 +29,7 @@ public class CommentResponseBody {
         this.reactionsRate = comment.getReactionsRate();
         this.text = comment.getMessage();
 
-        UserDetailsDto userDetailsDto = (UserDetailsDto) SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsDto userDetailsDto = (UserDetailsDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserEntity user = userDetailsDto.getUserEntity();
         Optional<UserCommentVoteStateEntity> userCommentVoteState = comment.getUserCommentVoteStates().stream()
                 .filter(userCommentVoteStateEntity -> userCommentVoteStateEntity.getUser().equals(user))

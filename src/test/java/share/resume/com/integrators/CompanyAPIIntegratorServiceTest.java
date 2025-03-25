@@ -11,6 +11,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import share.resume.com.controllers.dto.CompanyResponseDto;
+import share.resume.com.services.integrators.APIService;
+import share.resume.com.services.integrators.CompanyAPIIntegratorService;
 
 import java.util.List;
 

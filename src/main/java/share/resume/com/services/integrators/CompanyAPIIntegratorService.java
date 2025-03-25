@@ -1,4 +1,4 @@
-package share.resume.com.integrators;
+package share.resume.com.services.integrators;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

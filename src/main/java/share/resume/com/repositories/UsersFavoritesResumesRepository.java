@@ -14,4 +14,6 @@ public interface UsersFavoritesResumesRepository extends JpaRepository<UsersFavo
     Optional<UsersFavoritesResumesEntity> findByUser_IdAndResume_Id(UUID userId, UUID resumeId);
 
     List<UsersFavoritesResumesEntity> findByUser_Id(UUID userId);
+
+    void deleteByUser_IdAndResume_Id(UUID userId, UUID resumeId);
 }

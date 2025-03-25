@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import share.resume.com.entities.CompanyEntity;
 import share.resume.com.exceptions.EntityNotFoundException;
-import share.resume.com.integrators.CompanyAPIIntegratorService;
+import share.resume.com.services.integrators.CompanyAPIIntegratorService;
 import share.resume.com.controllers.dto.CompanyResponseDto;
 import share.resume.com.repositories.CompanyRepository;
 

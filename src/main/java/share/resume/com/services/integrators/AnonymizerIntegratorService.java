@@ -1,10 +1,11 @@
-package share.resume.com.integrators;
+package share.resume.com.services.integrators;
 
 import lombok.RequiredArgsConstructor;
 import okhttp3.MediaType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import share.resume.com.exceptions.HttpException;
 import share.resume.com.util.CustomMultipartFile;
 
 import java.util.Collections;
@@ -40,7 +41,7 @@ public class AnonymizerIntegratorService {
 
         String responseFile = (String) response.get("file");
         if (responseFile == null) {
-            throw new RuntimeException("Ответ API не содержит файла");
+            throw new HttpException("Anonymizer integrator service returned null response");
         }
 
         return new CustomMultipartFile(

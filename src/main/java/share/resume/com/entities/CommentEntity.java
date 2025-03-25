@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@Table
+@Table(name = "COMMENTS")
 @Entity
 public class CommentEntity {
 
@@ -25,6 +25,6 @@ public class CommentEntity {
     private int reactionsRate;
     private String message;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "comment")
     private List<UserCommentVoteStateEntity> userCommentVoteStates = new ArrayList<>();
 }

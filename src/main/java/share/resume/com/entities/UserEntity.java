@@ -26,6 +26,6 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private RoleEnum role;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
     private List<UserCommentVoteStateEntity> userCommentVoteStates;
 }

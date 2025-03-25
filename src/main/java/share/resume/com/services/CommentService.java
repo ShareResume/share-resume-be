@@ -37,7 +37,7 @@ public class CommentService {
         }
         commentEntity.setResume(resume);
         commentEntity.setParentCommentId(parentCommentId);
-        commentEntity.setMessage(commentEntity.getMessage());
+        commentEntity.setMessage(createCommentRequestBody.getText());
         commentRepository.save(commentEntity);
     }
 
@@ -55,7 +55,7 @@ public class CommentService {
         if (VoteStateEnum.DOWN.equals(voteState) && commentRate > 0) {
             comment.setReactionsRate(commentRate - 1);
         }
-        UserDetailsDto userDetailsDto = (UserDetailsDto) SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsDto userDetailsDto = (UserDetailsDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserEntity user = userDetailsDto.getUserEntity();
         UserCommentVoteStateEntity userCommentVoteStateEntity = new UserCommentVoteStateEntity();
         userCommentVoteStateEntity.setComment(comment);
