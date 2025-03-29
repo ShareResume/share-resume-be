@@ -1,20 +1,21 @@
 package share.resume.com.services.files;
 
 import io.minio.*;
-import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import share.resume.com.exceptions.FileException;
-
-import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class MinioFileService implements FileService {
     private final MinioClient minioClient;
+
+    @Value("${minio.download.link}")
+    private String downloadLink;
 
     @Override
     public void upload(String directory, MultipartFile file, String fileName) {
@@ -27,6 +28,23 @@ public class MinioFileService implements FileService {
                         .bucket(directory)
                         .build();
                 minioClient.makeBucket(makeBucketArgs);
+
+                String policy = "{\n" +
+                        "  \"Version\": \"2012-10-17\",\n" +
+                        "  \"Statement\": [\n" +
+                        "    {\n" +
+                        "      \"Effect\": \"Allow\",\n" +
+                        "      \"Principal\": \"*\",\n" +
+                        "      \"Action\": [\"s3:GetObject\"],\n" +
+                        "      \"Resource\": [\"arn:aws:s3:::" + directory + "/*\"]\n" +
+                        "    }\n" +
+                        "  ]\n" +
+                        "}";
+
+                minioClient.setBucketPolicy(SetBucketPolicyArgs.builder()
+                        .bucket(directory)
+                        .config(policy)
+                        .build());
             }
             PutObjectArgs putObjectArgs = PutObjectArgs.builder()
                     .bucket(directory)
@@ -56,17 +74,6 @@ public class MinioFileService implements FileService {
 
     @Override
     public String getAccessLink(String directory, String filename) {
-        try {
-            GetPresignedObjectUrlArgs getPresignedObjectUrlArgs = GetPresignedObjectUrlArgs.builder()
-                    .bucket(directory)
-                    .object(filename)
-                    .method(Method.GET)
-                    .expiry(3, TimeUnit.MINUTES)
-                    .build();
-            return minioClient.getPresignedObjectUrl(getPresignedObjectUrlArgs);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw new FileException("Error during retrieving MinIO access link");
-        }
+        return downloadLink + "/" + directory + "/" + filename;
     }
 }
