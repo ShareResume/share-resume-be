@@ -6,6 +6,7 @@ import lombok.Setter;
 import share.resume.com.controllers.dto.CompanyResponseDto;
 import share.resume.com.controllers.dto.DocumentView;
 import share.resume.com.entities.ResumeEntity;
+import share.resume.com.entities.enums.ResumeStatus;
 import share.resume.com.entities.enums.SpecialityEnum;
 
 import java.time.LocalDateTime;
@@ -16,8 +17,6 @@ import java.util.UUID;
 @Setter
 public class ResumeResponseBody {
     private UUID id;
-    private UUID authorId;
-    private String authorEmail;
     private boolean isHrScreeningPassed;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
@@ -27,11 +26,10 @@ public class ResumeResponseBody {
     private boolean isHidden;
     private CompanyResponseDto company;
     private List<DocumentView> documents;
+    private ResumeStatus resumeStatus;
 
     public ResumeResponseBody(ResumeEntity resume, List<DocumentView> documents) {
         this.id = resume.getId();
-        this.authorId = resume.getAuthor().getId();
-        this.authorEmail = resume.getAuthor().getEmail();
         this.isHrScreeningPassed = resume.isHrScreeningPassed();
         this.createdAt = resume.getCreatedAt();
         this.yearsOfExperience = resume.getYearsOfExperience();
@@ -39,5 +37,6 @@ public class ResumeResponseBody {
         this.isHidden = resume.isHidden();
         this.company = new CompanyResponseDto(resume.getCompany());
         this.documents = documents;
+        this.resumeStatus = resume.getStatus();
     }
 }

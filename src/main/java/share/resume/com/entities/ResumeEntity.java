@@ -3,6 +3,7 @@ package share.resume.com.entities;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import share.resume.com.entities.enums.ResumeStatus;
 import share.resume.com.entities.enums.SpecialityEnum;
 
 import java.time.LocalDateTime;
@@ -34,6 +35,12 @@ public class ResumeEntity {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "resume")
     private List<DocumentEntity> documents;
+
+    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL)
+    private List<CommentEntity> comments;
     private boolean isHidden;
+
+    @Enumerated(EnumType.STRING)
+    private ResumeStatus status;
 
 }

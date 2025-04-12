@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import share.resume.com.controllers.dto.ResumeFilterDto;
 import share.resume.com.controllers.dto.response.UserResumeResponseBody;
 import share.resume.com.entities.ResumeEntity;
+import share.resume.com.entities.enums.ResumeStatus;
 import share.resume.com.repositories.ResumeRepository;
 import share.resume.com.repositories.criteria.ResumeSpecification;
 
@@ -22,6 +23,7 @@ public class UsersResumesService {
     public List<UserResumeResponseBody> getAll(ResumeFilterDto filter) {
         List<ResumeEntity> resumes = resumeRepository.findAll(resumeSpecification.filterBy(filter));
         return resumes.stream()
+                .filter(resume -> ResumeStatus.APPROVED.equals(resume.getStatus()))
                 .map(UserResumeResponseBody::new)
                 .collect(Collectors.toList());
     }
