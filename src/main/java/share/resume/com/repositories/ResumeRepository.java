@@ -7,10 +7,13 @@ import share.resume.com.entities.ResumeEntity;
 import share.resume.com.entities.UserEntity;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface ResumeRepository extends JpaRepository<ResumeEntity, UUID>, JpaSpecificationExecutor<ResumeEntity> {
 
     List<ResumeEntity> findAllByAuthor(UserEntity author);
+
+    Optional<ResumeEntity> findByIdAndAuthor(UUID id, UserEntity author);
 }

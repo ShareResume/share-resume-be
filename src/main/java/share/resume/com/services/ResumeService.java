@@ -19,10 +19,10 @@ import share.resume.com.entities.ResumeEntity;
 import share.resume.com.entities.UserEntity;
 import share.resume.com.entities.enums.DocumentAccessTypeEnum;
 import share.resume.com.exceptions.EntityNotFoundException;
-import share.resume.com.services.integrators.AnonymizerIntegratorService;
 import share.resume.com.repositories.ResumeRepository;
 import share.resume.com.security.dto.UserDetailsDto;
 import share.resume.com.services.files.FileService;
+import share.resume.com.services.integrators.AnonymizerIntegratorService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -85,8 +85,9 @@ public class ResumeService {
 
     @Transactional
     public ResumeEntity getById(UUID id) {
-        return resumeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Resume not found: " + id));
+        UserDetailsDto userDetailsDto = (UserDetailsDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return resumeRepository.findByIdAndAuthor(id, userDetailsDto.getUserEntity())
+                .orElseThrow(() -> new EntityNotFoundException("Resume with id: " + id + " not found for user: " + userDetailsDto.getEmail()));
     }
 
     @Transactional
