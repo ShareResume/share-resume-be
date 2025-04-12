@@ -18,6 +18,7 @@ import share.resume.com.entities.DocumentEntity;
 import share.resume.com.entities.ResumeEntity;
 import share.resume.com.entities.UserEntity;
 import share.resume.com.entities.enums.DocumentAccessTypeEnum;
+import share.resume.com.entities.enums.RoleEnum;
 import share.resume.com.exceptions.EntityNotFoundException;
 import share.resume.com.repositories.ResumeRepository;
 import share.resume.com.security.dto.UserDetailsDto;
@@ -109,7 +110,12 @@ public class ResumeService {
     @Transactional
     public List<ResumeResponseBody> getAll() {
         UserDetailsDto userDetailsDto = (UserDetailsDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<ResumeEntity> resumes = resumeRepository.findAllByAuthor(userDetailsDto.getUserEntity());
+        List<ResumeEntity> resumes;
+        if (RoleEnum.USER.equals(userDetailsDto.getRole())) {
+            resumes = resumeRepository.findAllByAuthor(userDetailsDto.getUserEntity());
+        } else {
+            resumes = resumeRepository.findAll();
+        }
         List<ResumeResponseBody> resumeResponseBodies = new ArrayList<>();
         for (ResumeEntity resume : resumes) {
             List<DocumentView> documentViews = getDocumentsByResume(resume);
