@@ -34,7 +34,7 @@ public class ResumeController {
     }
 
     @PatchMapping("/{id}")
-    public void update(@PathVariable UUID id, @RequestBody @Valid UpdateResumeRequestBody updateResumeRequestBody) {
+    public void update(@PathVariable UUID id, @RequestBody @Valid UpdateResumeRequestBody updateResumeRequestBody) throws Exception {
         resumeService.update(id, updateResumeRequestBody);
     }
 }

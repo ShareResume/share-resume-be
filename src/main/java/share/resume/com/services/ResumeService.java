@@ -22,6 +22,7 @@ import share.resume.com.entities.enums.RoleEnum;
 import share.resume.com.exceptions.EntityNotFoundException;
 import share.resume.com.repositories.ResumeRepository;
 import share.resume.com.security.dto.UserDetailsDto;
+import share.resume.com.services.commands.facade.ResumeUpdateCommandFacade;
 import share.resume.com.services.files.FileService;
 import share.resume.com.services.integrators.AnonymizerIntegratorService;
 
@@ -39,6 +40,7 @@ public class ResumeService {
     private final ResumeRepository resumeRepository;
     private final FileService fileService;
     private final AnonymizerIntegratorService anonymizerIntegratorService;
+    private final ResumeUpdateCommandFacade resumeUpdateCommandFacade;
 
     @Transactional
     public void save(CreateResumeRequestBody createResumeRequestBody) {
@@ -76,12 +78,9 @@ public class ResumeService {
     }
 
     @Transactional
-    public void update(UUID id, UpdateResumeRequestBody updateResumeRequestBody) {
-        Boolean isHidden = updateResumeRequestBody.getIsHidden();
-        if (isHidden != null) {
-            ResumeEntity resume = getById(id);
-            resume.setHidden(isHidden);
-        }
+    public void update(UUID id, UpdateResumeRequestBody updateResumeRequestBody) throws Exception {
+        UserDetailsDto userDetailsDto = (UserDetailsDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        resumeUpdateCommandFacade.execute(userDetailsDto.getRole(), id, updateResumeRequestBody);
     }
 
     @Transactional
