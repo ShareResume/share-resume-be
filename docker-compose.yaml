@@ -54,8 +54,10 @@ services:
     environment:
       - "MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}"
       - "MINIO_SECRET_KEY=${MINIO_SECRET_KEY}"
+      - "MINIO_CONSOLE_ADDRESS=:9001"
     ports:
       - "${DOCKER_EXPOSE_MINIO_PORT}:9000"
+      - "9001:9001"
     volumes:
       - minio_data:/data
     command: server /data
