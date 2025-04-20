@@ -18,6 +18,7 @@ import share.resume.com.entities.DocumentEntity;
 import share.resume.com.entities.ResumeEntity;
 import share.resume.com.entities.UserEntity;
 import share.resume.com.entities.enums.DocumentAccessTypeEnum;
+import share.resume.com.entities.enums.ResumeStatus;
 import share.resume.com.entities.enums.RoleEnum;
 import share.resume.com.exceptions.EntityNotFoundException;
 import share.resume.com.repositories.ResumeRepository;
@@ -54,6 +55,7 @@ public class ResumeService {
         resume.setSpeciality(createResumeRequestBody.getSpeciality());
         resume.setHrScreeningPassed(createResumeRequestBody.getIsHrScreeningPassed());
         resume.setYearsOfExperience(createResumeRequestBody.getYearsOfExperience());
+        resume.setStatus(ResumeStatus.WAITING_FOR_APPROVE);
 
         MultipartFile publicCv = createResumeRequestBody.getDocument();
         String directoryName = "user-directory-" + user.getId();
