@@ -1,6 +1,7 @@
 package share.resume.com.services.files;
 
 import io.minio.*;
+import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -61,6 +62,7 @@ public class MinioFileService implements FileService {
             GetPresignedObjectUrlArgs getPresignedObjectUrlArgs = GetPresignedObjectUrlArgs.builder()
                     .bucket(directory)
                     .object(filename)
+                    .method(Method.GET)
                     .build();
             return minioClient.getPresignedObjectUrl(getPresignedObjectUrlArgs);
         } catch (Exception e) {
