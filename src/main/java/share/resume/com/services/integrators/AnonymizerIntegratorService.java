@@ -45,8 +45,8 @@ public class AnonymizerIntegratorService {
         }
 
         return new CustomMultipartFile(
-                file.getOriginalFilename() + "-PRIVATE",
-                file.getOriginalFilename() + "-PRIVATE",
+                "PRIVATE-" + file.getOriginalFilename(),
+                "PRIVATE-" + file.getOriginalFilename(),
                 file.getContentType(),
                 responseFile.getBytes()
         );
