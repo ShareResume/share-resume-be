@@ -28,23 +28,6 @@ public class MinioFileService implements FileService {
                         .bucket(directory)
                         .build();
                 minioClient.makeBucket(makeBucketArgs);
-
-                String policy = "{\n" +
-                        "  \"Version\": \"2012-10-17\",\n" +
-                        "  \"Statement\": [\n" +
-                        "    {\n" +
-                        "      \"Effect\": \"Allow\",\n" +
-                        "      \"Principal\": \"*\",\n" +
-                        "      \"Action\": [\"s3:GetObject\"],\n" +
-                        "      \"Resource\": [\"arn:aws:s3:::" + directory + "/*\"]\n" +
-                        "    }\n" +
-                        "  ]\n" +
-                        "}";
-
-                minioClient.setBucketPolicy(SetBucketPolicyArgs.builder()
-                        .bucket(directory)
-                        .config(policy)
-                        .build());
             }
             PutObjectArgs putObjectArgs = PutObjectArgs.builder()
                     .bucket(directory)
@@ -74,6 +57,15 @@ public class MinioFileService implements FileService {
 
     @Override
     public String getAccessLink(String directory, String filename) {
-        return downloadLink + "/" + directory + "/" + filename;
+        try {
+            GetPresignedObjectUrlArgs getPresignedObjectUrlArgs = GetPresignedObjectUrlArgs.builder()
+                    .bucket(directory)
+                    .object(filename)
+                    .build();
+            return minioClient.getPresignedObjectUrl(getPresignedObjectUrlArgs);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new FileException("Error during retrieving access link from MinIO");
+        }
     }
 }
