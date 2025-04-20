@@ -1,8 +1,10 @@
 package share.resume.com.entities.enums;
 
 public enum SpecialityEnum {
-    SDE,
+    FRONTEND,
+    BACKEND,
+    FULL_STACK,
+    DEV_OPS,
     QA,
-    PM,
-    DA
+    UI_UX
 }

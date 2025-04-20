@@ -20,10 +20,14 @@ public class CompanyAPIIntegratorService {
     @Value("${companies.integrator.token}")
     private String integratorToken;
 
+    @Value("${companies.integrator.size.parameter}")
+    private Integer sizeParameter;
+
 
     public List<CompanyResponseDto> getCompaniesByName(String companyName) {
         Map<String, Object> requestParams = new HashMap<>();
         requestParams.put("name", companyName);
+        requestParams.put("size", sizeParameter);
         Map<String, String> requestHeaders = new HashMap<>();
         requestHeaders.put("Authorization", integratorToken);
         try {

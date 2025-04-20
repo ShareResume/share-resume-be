@@ -12,7 +12,7 @@ import share.resume.com.services.UsersResumesService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users-resumes")
+@RequestMapping("/api/users-resumes")
 @RequiredArgsConstructor
 public class UsersResumesController {
     private final UsersResumesService usersResumesService;
