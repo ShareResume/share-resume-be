@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import share.resume.com.controllers.dto.CompanyResponseDto;
 
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -20,6 +22,9 @@ public class CompanyEntity {
     private UUID id;
     private String name;
     private String logoUrl;
+
+    @ManyToMany(mappedBy = "companies")
+    private List<ResumeEntity> resumes;
 
     public CompanyEntity(CompanyResponseDto companyResponseDto) {
         this.name = companyResponseDto.getName();

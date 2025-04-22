@@ -25,8 +25,8 @@ public class ResumeEntity {
     private UserEntity author;
     private boolean isHrScreeningPassed;
 
-    @ManyToOne
-    private CompanyEntity company;
+    @ManyToMany(fetch = FetchType.EAGER)
+    private List<CompanyEntity> companies;
     private LocalDateTime createdAt;
     private Integer yearsOfExperience;
 

@@ -5,11 +5,13 @@ import lombok.Getter;
 import lombok.Setter;
 import share.resume.com.controllers.dto.CompanyResponseDto;
 import share.resume.com.controllers.dto.DocumentView;
+import share.resume.com.entities.CompanyEntity;
 import share.resume.com.entities.ResumeEntity;
 import share.resume.com.entities.enums.ResumeStatus;
 import share.resume.com.entities.enums.SpecialityEnum;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,7 +26,7 @@ public class ResumeResponseBody {
     private Integer yearsOfExperience;
     private SpecialityEnum speciality;
     private boolean isHidden;
-    private CompanyResponseDto company;
+    private List<CompanyResponseDto> companies;
     private List<DocumentView> documents;
     private ResumeStatus resumeStatus;
 
@@ -35,7 +37,10 @@ public class ResumeResponseBody {
         this.yearsOfExperience = resume.getYearsOfExperience();
         this.speciality = resume.getSpeciality();
         this.isHidden = resume.isHidden();
-        this.company = new CompanyResponseDto(resume.getCompany());
+        this.companies = new ArrayList<>();
+        for (CompanyEntity c : resume.getCompanies()) {
+            this.companies.add(new CompanyResponseDto(c));
+        }
         this.documents = documents;
         this.resumeStatus = resume.getStatus();
     }

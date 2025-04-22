@@ -49,8 +49,8 @@ public class ResumeService {
         UserDetailsDto userDetailsDto = (UserDetailsDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserEntity user = userDetailsDto.getUserEntity();
         resume.setAuthor(user);
-        CompanyEntity company = companyService.getById(createResumeRequestBody.getCompanyId());
-        resume.setCompany(company);
+        List<CompanyEntity> companies = companyService.getAllByIds(createResumeRequestBody.getCompaniesIds());
+        resume.setCompanies(companies);
         resume.setCreatedAt(LocalDateTime.now());
         resume.setSpeciality(createResumeRequestBody.getSpeciality());
         resume.setHrScreeningPassed(createResumeRequestBody.getIsHrScreeningPassed());
@@ -135,5 +135,17 @@ public class ResumeService {
             documentViews.add(documentView);
         }
         return documentViews;
+    }
+
+    public DocumentView getPrivateDocumentByResume(ResumeEntity resume) {
+        DocumentEntity document = resume.getDocuments().stream()
+                .filter(doc -> DocumentAccessTypeEnum.PRIVATE.equals(doc.getAccessType()))
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("Private document for resume with id: " + resume.getId() + " not found"));
+        DocumentView documentView = new DocumentView();
+        documentView.setAccessType(DocumentAccessTypeEnum.PUBLIC);
+        documentView.setName(document.getName());
+        documentView.setUrl(fileService.getAccessLink(document.getDirectory(), document.getName()));
+        return documentView;
     }
 }

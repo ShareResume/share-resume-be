@@ -18,13 +18,14 @@ import java.util.stream.Collectors;
 public class UsersResumesService {
     private final ResumeSpecification resumeSpecification;
     private final ResumeRepository resumeRepository;
+    private final ResumeService resumeService;
 
     @Transactional
     public List<UserResumeResponseBody> getAll(ResumeFilterDto filter) {
         List<ResumeEntity> resumes = resumeRepository.findAll(resumeSpecification.filterBy(filter));
         return resumes.stream()
                 .filter(resume -> ResumeStatus.APPROVED.equals(resume.getStatus()))
-                .map(UserResumeResponseBody::new)
+                .map(resume -> new UserResumeResponseBody(resume, resumeService.getPrivateDocumentByResume(resume)))
                 .collect(Collectors.toList());
     }
 }

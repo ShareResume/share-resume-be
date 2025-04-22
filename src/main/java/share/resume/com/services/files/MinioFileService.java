@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import share.resume.com.exceptions.FileException;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -59,10 +62,13 @@ public class MinioFileService implements FileService {
     @Override
     public String getAccessLink(String directory, String filename) {
         try {
+            Map<String, String> reqParams = new HashMap<>();
+            reqParams.put("response-content-type", "application/pdf");
             GetPresignedObjectUrlArgs getPresignedObjectUrlArgs = GetPresignedObjectUrlArgs.builder()
                     .bucket(directory)
                     .object(filename)
                     .method(Method.GET)
+                    .extraQueryParams(reqParams)
                     .build();
             return minioClient.getPresignedObjectUrl(getPresignedObjectUrlArgs);
         } catch (Exception e) {
