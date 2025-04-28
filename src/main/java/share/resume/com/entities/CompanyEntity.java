@@ -7,7 +7,6 @@ import lombok.Setter;
 import share.resume.com.controllers.dto.CompanyResponseDto;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -23,8 +22,8 @@ public class CompanyEntity {
     private String name;
     private String logoUrl;
 
-    @ManyToMany(mappedBy = "companies")
-    private List<ResumeEntity> resumes;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "company")
+    private List<ResumesCompaniesEntity> resumesCompanies;
 
     public CompanyEntity(CompanyResponseDto companyResponseDto) {
         this.name = companyResponseDto.getName();

@@ -23,10 +23,10 @@ public class ResumeEntity {
     @ManyToOne
     @JoinColumn(name = "AUTHOR_ID")
     private UserEntity author;
-    private boolean isHrScreeningPassed;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    private List<CompanyEntity> companies;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "resume")
+    private List<ResumesCompaniesEntity> resumesCompanies;
+
     private LocalDateTime createdAt;
     private Integer yearsOfExperience;
 

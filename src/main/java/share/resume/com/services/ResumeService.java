@@ -10,13 +10,11 @@ import org.springframework.web.multipart.MultipartFile;
 import share.resume.com.async.transactions.events.ResumeCreatedEvent;
 import share.resume.com.async.transactions.events.ResumeDeletedEvent;
 import share.resume.com.controllers.dto.DocumentView;
+import share.resume.com.controllers.dto.request.CompanyWithStatusDto;
 import share.resume.com.controllers.dto.request.CreateResumeRequestBody;
 import share.resume.com.controllers.dto.request.UpdateResumeRequestBody;
 import share.resume.com.controllers.dto.response.ResumeResponseBody;
-import share.resume.com.entities.CompanyEntity;
-import share.resume.com.entities.DocumentEntity;
-import share.resume.com.entities.ResumeEntity;
-import share.resume.com.entities.UserEntity;
+import share.resume.com.entities.*;
 import share.resume.com.entities.enums.DocumentAccessTypeEnum;
 import share.resume.com.entities.enums.ResumeStatus;
 import share.resume.com.entities.enums.RoleEnum;
@@ -31,6 +29,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -49,11 +48,8 @@ public class ResumeService {
         UserDetailsDto userDetailsDto = (UserDetailsDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserEntity user = userDetailsDto.getUserEntity();
         resume.setAuthor(user);
-        List<CompanyEntity> companies = companyService.getAllByIds(createResumeRequestBody.getCompaniesIds());
-        resume.setCompanies(companies);
         resume.setCreatedAt(LocalDateTime.now());
         resume.setSpeciality(createResumeRequestBody.getSpeciality());
-        resume.setHrScreeningPassed(createResumeRequestBody.getIsHrScreeningPassed());
         resume.setYearsOfExperience(createResumeRequestBody.getYearsOfExperience());
         resume.setStatus(ResumeStatus.WAITING_FOR_APPROVE);
 
@@ -74,6 +70,17 @@ public class ResumeService {
         privateCvEntity.setDirectory(directoryName);
         privateCvEntity.setName(privateCvFile.getOriginalFilename());
         resume.setDocuments(List.of(publicCvEnitiy, privateCvEntity));
+
+        List<CompanyEntity> companies = companyService.getAllByIds(createResumeRequestBody.getCompanies().stream().map(CompanyWithStatusDto::getId).collect(Collectors.toList()));
+        List<ResumesCompaniesEntity> resumesCompaniesEntities = new ArrayList<>();
+        for (CompanyEntity company : companies) {
+            ResumesCompaniesEntity resumesCompaniesEntity = new ResumesCompaniesEntity();
+            resumesCompaniesEntity.setCompany(company);
+            resumesCompaniesEntity.setResume(resume);
+            resumesCompaniesEntity.setIsHrScreeningPassed(createResumeRequestBody.getCompanies().stream().filter(companyWithStatusDto -> company.getId().equals(companyWithStatusDto.getId())).findFirst().get().getIsHrScreeningPassed());
+            resumesCompaniesEntities.add(resumesCompaniesEntity);
+        }
+        resume.setResumesCompanies(resumesCompaniesEntities);
 
         eventPublisher.publishEvent(new ResumeCreatedEvent(createResumeRequestBody.getDocument(), publicCvFileName, directoryName, privateCvFile, privateCvFile.getOriginalFilename()));
         resumeRepository.save(resume);
@@ -143,7 +150,7 @@ public class ResumeService {
                 .findFirst()
                 .orElseThrow(() -> new EntityNotFoundException("Private document for resume with id: " + resume.getId() + " not found"));
         DocumentView documentView = new DocumentView();
-        documentView.setAccessType(DocumentAccessTypeEnum.PUBLIC);
+        documentView.setAccessType(DocumentAccessTypeEnum.PRIVATE);
         documentView.setName(document.getName());
         documentView.setUrl(fileService.getAccessLink(document.getDirectory(), document.getName()));
         return documentView;

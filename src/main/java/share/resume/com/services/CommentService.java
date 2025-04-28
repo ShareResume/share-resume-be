@@ -17,6 +17,7 @@ import share.resume.com.exceptions.EntityNotFoundException;
 import share.resume.com.repositories.CommentRepository;
 import share.resume.com.security.dto.UserDetailsDto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,6 +39,7 @@ public class CommentService {
         commentEntity.setResume(resume);
         commentEntity.setParentCommentId(parentCommentId);
         commentEntity.setMessage(createCommentRequestBody.getText());
+        commentEntity.setCreatedAt(LocalDateTime.now());
         commentRepository.save(commentEntity);
     }
 

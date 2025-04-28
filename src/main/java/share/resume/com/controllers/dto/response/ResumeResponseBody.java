@@ -7,6 +7,7 @@ import share.resume.com.controllers.dto.CompanyResponseDto;
 import share.resume.com.controllers.dto.DocumentView;
 import share.resume.com.entities.CompanyEntity;
 import share.resume.com.entities.ResumeEntity;
+import share.resume.com.entities.ResumesCompaniesEntity;
 import share.resume.com.entities.enums.ResumeStatus;
 import share.resume.com.entities.enums.SpecialityEnum;
 
@@ -19,7 +20,6 @@ import java.util.UUID;
 @Setter
 public class ResumeResponseBody {
     private UUID id;
-    private boolean isHrScreeningPassed;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
@@ -32,13 +32,12 @@ public class ResumeResponseBody {
 
     public ResumeResponseBody(ResumeEntity resume, List<DocumentView> documents) {
         this.id = resume.getId();
-        this.isHrScreeningPassed = resume.isHrScreeningPassed();
         this.createdAt = resume.getCreatedAt();
         this.yearsOfExperience = resume.getYearsOfExperience();
         this.speciality = resume.getSpeciality();
         this.isHidden = resume.isHidden();
         this.companies = new ArrayList<>();
-        for (CompanyEntity c : resume.getCompanies()) {
+        for (ResumesCompaniesEntity c : resume.getResumesCompanies()) {
             this.companies.add(new CompanyResponseDto(c));
         }
         this.documents = documents;

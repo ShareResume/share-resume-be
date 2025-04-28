@@ -25,7 +25,8 @@ public class UsersResumesService {
         List<ResumeEntity> resumes = resumeRepository.findAll(resumeSpecification.filterBy(filter));
         return resumes.stream()
                 .filter(resume -> ResumeStatus.APPROVED.equals(resume.getStatus()))
-                .map(resume -> new UserResumeResponseBody(resume, resumeService.getPrivateDocumentByResume(resume)))
+                .map(resume -> new UserResumeResponseBody(resume, resumeService.getPrivateDocumentByResume(resume), filter))
+                .filter(userResumeResponseBody -> !userResumeResponseBody.getCompanies().isEmpty())
                 .collect(Collectors.toList());
     }
 }

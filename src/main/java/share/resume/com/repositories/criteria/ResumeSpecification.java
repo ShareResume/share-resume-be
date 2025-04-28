@@ -1,11 +1,14 @@
 package share.resume.com.repositories.criteria;
 
+import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import share.resume.com.controllers.dto.RangeDto;
 import share.resume.com.controllers.dto.ResumeFilterDto;
+import share.resume.com.entities.CompanyEntity;
 import share.resume.com.entities.ResumeEntity;
+import share.resume.com.entities.ResumesCompaniesEntity;
 import share.resume.com.entities.enums.SpecialityEnum;
 
 import java.time.LocalDate;
@@ -23,19 +26,10 @@ public class ResumeSpecification {
                 return criteriaBuilder.and();
             }
             List<Predicate> predicates = new ArrayList<>();
-            UUID companyId = filter.getCompanyId();
-            if (companyId != null) {
-                predicates.add(criteriaBuilder.equal(root.get("company").get("id"), companyId));
-            }
 
             SpecialityEnum speciality = filter.getSpeciality();
             if (speciality != null) {
                 predicates.add(criteriaBuilder.equal(root.get("speciality"), speciality));
-            }
-
-            Boolean isHrScreeningPassed = filter.getIsHrScreeningPassed();
-            if (isHrScreeningPassed != null) {
-                predicates.add(criteriaBuilder.equal(root.get("isHrScreeningPassed"), isHrScreeningPassed));
             }
 
             RangeDto yearOfExperienceRange = filter.getYearOfExperienceRange();

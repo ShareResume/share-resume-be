@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -24,6 +25,7 @@ public class CommentEntity {
     private UUID parentCommentId;
     private int reactionsRate;
     private String message;
+    private LocalDateTime createdAt;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "comment")
     private List<UserCommentVoteStateEntity> userCommentVoteStates = new ArrayList<>();

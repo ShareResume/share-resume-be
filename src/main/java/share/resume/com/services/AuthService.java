@@ -27,7 +27,7 @@ public class AuthService {
         }
         String accessToken = jwtService.generateAccessToken(userDetailsDto);
         String refreshToken = jwtService.generateRefreshToken(userDetailsDto.getId(), userDetailsDto.getEmail());
-        return Map.of("accessToken", accessToken, "refreshToken", refreshToken);
+        return Map.of("accessToken", accessToken, "refreshToken", refreshToken, "role", userDetailsDto.getRole().name());
     }
 
     @Transactional
