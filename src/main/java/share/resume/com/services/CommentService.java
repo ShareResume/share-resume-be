@@ -45,7 +45,13 @@ public class CommentService {
 
     @Transactional
     public void reactToComment(ReactToCommentRequestBody reactToCommentRequestBody) {
+        UserDetailsDto userDetailsDto = (UserDetailsDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserEntity user = userDetailsDto.getUserEntity();
         CommentEntity comment = getById(reactToCommentRequestBody.getCommentId());
+        if (comment.getUserCommentVoteStates().stream()
+                .anyMatch(userCommentVoteStateEntity -> userCommentVoteStateEntity.getUser().equals(user))) {
+            throw new ActionNotAllowed("Cannot react to comment because it is already voted");
+        }
         VoteStateEnum voteState = reactToCommentRequestBody.getVoteState();
         if (VoteStateEnum.UNDEFINED.equals(voteState)) {
             throw new ActionNotAllowed("You can't react with undefined vote state");
@@ -57,8 +63,6 @@ public class CommentService {
         if (VoteStateEnum.DOWN.equals(voteState) && commentRate > 0) {
             comment.setReactionsRate(commentRate - 1);
         }
-        UserDetailsDto userDetailsDto = (UserDetailsDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserEntity user = userDetailsDto.getUserEntity();
         UserCommentVoteStateEntity userCommentVoteStateEntity = new UserCommentVoteStateEntity();
         userCommentVoteStateEntity.setComment(comment);
         userCommentVoteStateEntity.setVoteState(voteState);

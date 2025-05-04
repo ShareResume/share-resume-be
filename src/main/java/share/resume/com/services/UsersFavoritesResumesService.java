@@ -22,12 +22,13 @@ import java.util.UUID;
 public class UsersFavoritesResumesService {
     private final UsersFavoritesResumesRepository usersFavoritesResumesRepository;
     private final ResumeService resumeService;
+    private final UsersResumesService usersResumesService;
 
     @Transactional
     public void bookmarkResume(BookmarkResumeRequestBody bookmarkResumeRequestBody) {
         UserDetailsDto userDetailsDto = (UserDetailsDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserEntity user = userDetailsDto.getUserEntity();
-        ResumeEntity resume = resumeService.getById(bookmarkResumeRequestBody.getResumeId());
+        ResumeEntity resume = usersResumesService.getById(bookmarkResumeRequestBody.getResumeId());
         Optional<UsersFavoritesResumesEntity> usersFavoritesResumesEntity = usersFavoritesResumesRepository.findByUser_IdAndResume_Id(user.getId(), resume.getId());
         if (usersFavoritesResumesEntity.isPresent()) {
             throw new ActionNotAllowed("You can not bookmark resume with id " + bookmarkResumeRequestBody.getResumeId() + " twice");
@@ -50,7 +51,7 @@ public class UsersFavoritesResumesService {
         List<UsersFavoritesResumesEntity> usersFavoritesResumesEntities = usersFavoritesResumesRepository.findByUser_Id(userDetailsDto.getId());
         return usersFavoritesResumesEntities.stream()
                 .map(UsersFavoritesResumesEntity::getResume)
-                .map(resume -> new ResumeResponseBody(resume, resumeService.getDocumentsByResume(resume)))
+                .map(resume -> new ResumeResponseBody(resume, List.of(resumeService.getPrivateDocumentByResume(resume))))
                 .toList();
     }
 }

@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import share.resume.com.controllers.dto.CompanyResponseDto;
 import share.resume.com.controllers.dto.DocumentView;
-import share.resume.com.controllers.dto.ResumeFilterDto;
-import share.resume.com.entities.CompanyEntity;
 import share.resume.com.entities.ResumeEntity;
 import share.resume.com.entities.ResumesCompaniesEntity;
 import share.resume.com.entities.enums.SpecialityEnum;
@@ -28,19 +26,11 @@ public class UserResumeResponseBody {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate date;
 
-    public UserResumeResponseBody(ResumeEntity resumeEntity, DocumentView document, ResumeFilterDto resumeFilterDto) {
+    public UserResumeResponseBody(ResumeEntity resumeEntity, DocumentView document) {
         this.id = resumeEntity.getId();
         this.companies = new ArrayList<>();
         for (ResumesCompaniesEntity c : resumeEntity.getResumesCompanies()) {
-            Boolean isHrPassed = resumeFilterDto.getIsHrScreeningPassed();
-            UUID companyId = resumeFilterDto.getCompanyId();
-
-            boolean matchesHrScreeningPassed = (isHrPassed == null || c.getIsHrScreeningPassed().equals(isHrPassed));
-            boolean matchesCompanyId = (companyId == null || c.getCompany().getId().equals(companyId));
-
-            if (matchesHrScreeningPassed && matchesCompanyId) {
-                this.companies.add(new CompanyResponseDto(c));
-            }
+            this.companies.add(new CompanyResponseDto(c));
         }
         speciality = resumeEntity.getSpeciality();
         yearsOfExperience = resumeEntity.getYearsOfExperience();
