@@ -1,15 +1,14 @@
 package share.resume.com.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import share.resume.com.controllers.dto.ResumeFilterDto;
 import share.resume.com.controllers.dto.response.UserResumeResponseBody;
 import share.resume.com.services.UsersResumesService;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/public-users-resumes")
@@ -20,5 +19,10 @@ public class UsersResumesController {
     @GetMapping
     public List<UserResumeResponseBody> getAll(@ModelAttribute ResumeFilterDto filter) {
         return usersResumesService.getAll(filter);
+    }
+
+    @PatchMapping("/{resumeId}")
+    public void updateResume(@PathVariable UUID resumeId, @RequestPart MultipartFile file) {
+        usersResumesService.updateUserPrivateResume(resumeId, file);
     }
 }
