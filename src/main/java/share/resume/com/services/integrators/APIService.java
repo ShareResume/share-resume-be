@@ -39,7 +39,7 @@ public class APIService {
                 log.error("Error sending GET request to url: {}, response: {}", finalUrl, responseBody);
                 throw new HttpException("Response isn't successful for url request: " + finalUrl);
             }
-            log.info("Response is successful for url request: " + finalUrl + ", response: " + responseBody);
+            log.info("Response is successful for url request: " + finalUrl);
             return objectMapper.readValue(responseBody, Map.class);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -110,7 +110,7 @@ public class APIService {
                 log.error("Error sending POST request to url: {}, response: {}", finalUrl, responseBody);
                 throw new HttpException("Response isn't successful for url request: " + finalUrl);
             }
-            log.info("Response is successful for url request: " + finalUrl + ", response: " + responseBody);
+            log.info("Response is successful for url request: " + finalUrl);
             if (isMultipart) {
                 return Map.of("file", responseBody);
             }

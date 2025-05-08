@@ -18,9 +18,6 @@ import java.util.Map;
 public class MinioFileService implements FileService {
     private final MinioClient minioClient;
 
-    @Value("${minio.download.link}")
-    private String downloadLink;
-
     @Override
     public void upload(String directory, MultipartFile file, String fileName) {
         try {
