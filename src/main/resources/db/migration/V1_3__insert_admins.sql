@@ -1,0 +1,1 @@
+INSERT INTO public.users (id, nick, email, password, role) VALUES ('b25135c9-b9f6-4143-a784-f8d2e8dfb005', 'ser_grigor', 'ser_grigor@ukr.nert', '$2a$10$FSMIE2J6Odc7TxLovlgzFuQ0EnAN2Yo9jfQugEHz2RWm7pd0n696i', 'ADMIN');
