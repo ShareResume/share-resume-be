@@ -31,7 +31,7 @@ public class CommentService {
     public void createComment(CreateCommentRequestBody createCommentRequestBody) {
         CommentEntity commentEntity = new CommentEntity();
         UUID resumeId = createCommentRequestBody.getResumeId();
-        ResumeEntity resume = resumeService.getById(resumeId);
+        ResumeEntity resume = resumeService.getByIdEntity(resumeId);
         UUID parentCommentId = createCommentRequestBody.getParentCommentId();
         if (parentCommentId != null && !existsById(parentCommentId)) {
             throw new EntityNotFoundException("Parent comment does not exist");

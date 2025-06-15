@@ -28,6 +28,11 @@ public class ResumeController {
         return ResponseEntity.ok(resumeService.getAll());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ResumeResponseBody> getById(@PathVariable UUID id) {
+        return ResponseEntity.ok(resumeService.getById(id));
+    }
+
     @DeleteMapping("/{id}")
     public void delete(@PathVariable UUID id) {
         resumeService.delete(id);

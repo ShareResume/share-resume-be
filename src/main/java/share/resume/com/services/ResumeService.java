@@ -93,7 +93,22 @@ public class ResumeService {
     }
 
     @Transactional
-    public ResumeEntity getById(UUID id) {
+    public ResumeResponseBody getById(UUID id) {
+        UserDetailsDto userDetailsDto = (UserDetailsDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResumeEntity resume;
+        if (RoleEnum.ADMIN.equals(userDetailsDto.getRole())) {
+            resume = resumeRepository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Resume with id: " + id + " not found"));
+        } else {
+            resume = resumeRepository.findByIdAndAuthor(id, userDetailsDto.getUserEntity())
+                    .orElseThrow(() -> new EntityNotFoundException("Resume with id: " + id + " not found for user: " + userDetailsDto.getEmail()));
+        }
+        List<DocumentView> documentViews = getDocumentsByResume(resume);
+        return new ResumeResponseBody(resume, documentViews);
+    }
+
+    @Transactional
+    public ResumeEntity getByIdEntity(UUID id) {
         UserDetailsDto userDetailsDto = (UserDetailsDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return resumeRepository.findByIdAndAuthor(id, userDetailsDto.getUserEntity())
                 .orElseThrow(() -> new EntityNotFoundException("Resume with id: " + id + " not found for user: " + userDetailsDto.getEmail()));
@@ -101,7 +116,7 @@ public class ResumeService {
 
     @Transactional
     public void delete(UUID id) {
-        ResumeEntity resume = getById(id);
+        ResumeEntity resume = getByIdEntity(id);
         resumeRepository.deleteById(id);
         DocumentEntity publicDoc = resume.getDocuments().stream()
                 .filter(d -> d.getAccessType() == DocumentAccessTypeEnum.PUBLIC)
