@@ -19,6 +19,7 @@ import share.resume.com.repositories.ResumeRepository;
 import share.resume.com.repositories.criteria.ResumeSpecification;
 import share.resume.com.security.dto.UserDetailsDto;
 import share.resume.com.services.files.FileService;
+import share.resume.com.controllers.dto.DocumentView;
 
 import java.util.List;
 import java.util.UUID;
@@ -52,6 +53,24 @@ public class UsersResumesService {
     public ResumeEntity getById(UUID id) {
         return resumeRepository.findByIdAndStatus(id, ResumeStatus.APPROVED)
                 .orElseThrow(() -> new EntityNotFoundException("Resume with id: " + id + " not found"));
+    }
+
+    @Transactional
+    public UserResumeResponseBody getPublicResumeById(UUID id) {
+        ResumeEntity resume = resumeRepository.findByIdAndStatus(id, ResumeStatus.APPROVED)
+                .orElseThrow(() -> new EntityNotFoundException("Resume with id: " + id + " not found"));
+        DocumentEntity publicDocument = resume.getDocuments().stream()
+                .filter(document -> DocumentAccessTypeEnum.PRIVATE.equals(document.getAccessType()))
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("Public document not found for resume with id: " + id));
+        
+        // Convert DocumentEntity to DocumentView
+        DocumentView documentView = new DocumentView();
+        documentView.setAccessType(publicDocument.getAccessType());
+        documentView.setName(publicDocument.getName());
+        documentView.setUrl(fileService.getAccessLink(publicDocument.getDirectory(), publicDocument.getName()));
+        
+        return new UserResumeResponseBody(resume, documentView);
     }
 
     @Transactional

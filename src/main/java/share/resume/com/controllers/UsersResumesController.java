@@ -21,6 +21,11 @@ public class UsersResumesController {
         return usersResumesService.getAll(filter);
     }
 
+    @GetMapping("/{resumeId}")
+    public UserResumeResponseBody getById(@PathVariable UUID resumeId) {
+        return usersResumesService.getPublicResumeById(resumeId);
+    }
+
     @PatchMapping("/{resumeId}")
     public void updateResume(@PathVariable UUID resumeId, @RequestPart MultipartFile file) {
         usersResumesService.updateUserPrivateResume(resumeId, file);
