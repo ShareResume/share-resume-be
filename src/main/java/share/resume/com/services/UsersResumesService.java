@@ -44,7 +44,7 @@ public class UsersResumesService {
             resume.setResumesCompanies(filteredCompanies);
         });
         return resumes.stream()
-                .filter(resume -> ResumeStatus.APPROVED.equals(resume.getStatus()))
+                .filter(resume -> ResumeStatus.APPROVED.equals(resume.getStatus()) && !resume.isHidden())
                 .map(resume -> new UserResumeResponseBody(resume, resumeService.getPrivateDocumentByResume(resume)))
                 .collect(Collectors.toList());
     }
